@@ -40,7 +40,8 @@ rdp-assignment/
 │   └── bundle3/          retransmission, SACK, loss recovery tests
 ├── template/rdp/         starter stubs — copy to src/rdp/ to begin
 ├── docs/protocol/
-│   └── wire-format.md    packet layout reference
+│   ├── wire-format.md    packet layout reference
+│   └── fsm.md            state machine and sequence diagrams
 ├── GRADING.md            bundle requirements and common pitfalls
 └── AI_POLICY.md          AI use policy
 ```
