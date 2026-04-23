@@ -39,10 +39,8 @@ rdp-assignment/
 │   ├── bundle2/          handshake + data transfer tests
 │   └── bundle3/          retransmission, SACK, loss recovery tests
 ├── template/rdp/         starter stubs — copy to src/rdp/ to begin
-├── solution/             DO NOT OPEN (reference solution, grading only)
 ├── docs/protocol/
 │   └── wire-format.md    packet layout reference
-├── WRITEUP.md            writeup instructions
 └── AI_POLICY.md          AI use policy
 ```
 
@@ -82,13 +80,9 @@ Extend Bundle 2 with retransmission on timer expiry, SACK-aware out-of-order buf
 
 The byte-level packet layout is specified in `docs/protocol/wire-format.md`. Read it before implementing anything in `framing.py`.
 
-## Writeup Requirement
-
-A written analysis is required alongside your code. See `WRITEUP.md` for full details. In short: choose three test scenarios, trace the event sequence through your implementation, and reference specific line numbers. The writeup is your primary evidence of authorship and understanding.
-
 ## Academic Integrity and AI Policy
 
-See `AI_POLICY.md` for the full policy. The short version: you are expected to write your own code. AI tools may help you understand concepts, read error messages, and debug, but you may not use them to generate complete function bodies for graded code. The writeup is the primary check — if you cannot explain your own code line by line, that is a problem.
+See `AI_POLICY.md` for the full policy. The short version: you are expected to write your own code. AI tools may help you understand concepts, read error messages, and debug, but you may not use them to generate complete function bodies for graded code.
 
 ## Grading
 
