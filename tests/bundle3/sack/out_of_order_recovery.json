@@ -1,0 +1,27 @@
+{
+  "name": "out_of_order_recovery",
+  "category": "sack",
+  "bundle": 3,
+  "points": 4,
+  "description": "Drop second of four segments; SACK tells sender to skip 3rd and 4th on retransmit.",
+  "config": {
+    "timer_interval": 1.0,
+    "window_size": 4096,
+    "a_isn": 1000,
+    "b_isn": 5000,
+    "initial_sender": "A"
+  },
+  "events": [
+    {"index": 0, "type": "handshake_complete"},
+    {"index": 1, "type": "drop_next", "match": {"host": "A", "pkt_type": "DATA", "seq": 1006}},
+    {"index": 2, "type": "app_send", "host": "A", "payload": "hello"},
+    {"index": 3, "type": "app_send", "host": "A", "payload": " worl"},
+    {"index": 4, "type": "app_send", "host": "A", "payload": "d!!!."},
+    {"index": 5, "type": "app_send", "host": "A", "payload": "more."},
+    {"index": 6, "t": 2.5, "type": "tick"}
+  ],
+  "assertions": [
+    {"after_event": 6, "host": "A", "check": "retransmit_count[1006] >= 1"},
+    {"after_event": 6, "host": "B", "check": "bytes_delivered == 20"}
+  ]
+}

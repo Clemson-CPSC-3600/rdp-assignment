@@ -1,0 +1,26 @@
+{
+  "name": "loss_then_burst",
+  "category": "retransmit",
+  "bundle": 3,
+  "points": 3,
+  "description": "First segment lost; second segment queued out-of-order; retransmit of first causes B to drain both.",
+  "config": {
+    "timer_interval": 1.0,
+    "window_size": 4096,
+    "a_isn": 1000,
+    "b_isn": 5000,
+    "initial_sender": "A"
+  },
+  "events": [
+    {"index": 0, "type": "handshake_complete"},
+    {"index": 1, "type": "drop_next", "match": {"host": "A", "pkt_type": "DATA", "seq": 1001}},
+    {"index": 2, "type": "app_send", "host": "A", "payload": "first"},
+    {"index": 3, "type": "app_send", "host": "A", "payload": "secnd"},
+    {"index": 4, "t": 2.5, "type": "tick"}
+  ],
+  "assertions": [
+    {"after_event": 4, "host": "A", "check": "retransmit_count[1001] >= 1"},
+    {"after_event": 4, "host": "B", "check": "bytes_delivered == 10"},
+    {"after_event": 4, "host": "A", "check": "bytes_acked == 10"}
+  ]
+}

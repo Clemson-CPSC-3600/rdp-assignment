@@ -1,0 +1,26 @@
+{
+  "name": "window_full",
+  "category": "data_transfer",
+  "bundle": 2,
+  "points": 3,
+  "description": "Third 5-byte segment is not sent while 10 bytes are already in-flight.",
+  "config": {
+    "timer_interval": 100.0,
+    "window_size": 10,
+    "a_isn": 1000,
+    "b_isn": 5000,
+    "initial_sender": "A"
+  },
+  "events": [
+    {"index": 0, "type": "handshake_complete"},
+    {"index": 1, "type": "drop_next", "match": {"host": "B", "pkt_type": "ACK"}},
+    {"index": 2, "type": "drop_next", "match": {"host": "B", "pkt_type": "ACK"}},
+    {"index": 3, "type": "app_send", "host": "A", "payload": "hello"},
+    {"index": 4, "type": "app_send", "host": "A", "payload": " worl"},
+    {"index": 5, "type": "app_send", "host": "A", "payload": "d!!!!"}
+  ],
+  "assertions": [
+    {"after_event": 5, "host": "A", "check": "next_seq == 1011"},
+    {"after_event": 5, "host": "A", "check": "window_base == 1001"}
+  ]
+}

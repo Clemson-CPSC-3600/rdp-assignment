@@ -1,0 +1,26 @@
+{
+  "name": "consecutive_ack_loss",
+  "category": "ack_loss",
+  "bundle": 3,
+  "points": 3,
+  "description": "First two ACKs from B are dropped (one after each segment); the third segment's ACK arrives cleanly and cumulatively retires all three.",
+  "config": {
+    "timer_interval": 1.0,
+    "window_size": 4096,
+    "a_isn": 1000,
+    "b_isn": 5000,
+    "initial_sender": "A"
+  },
+  "events": [
+    {"index": 0, "type": "handshake_complete"},
+    {"index": 1, "type": "drop_next", "match": {"host": "B", "pkt_type": "ACK"}},
+    {"index": 2, "type": "app_send", "host": "A", "payload": "alpha"},
+    {"index": 3, "type": "drop_next", "match": {"host": "B", "pkt_type": "ACK"}},
+    {"index": 4, "type": "app_send", "host": "A", "payload": "bravo"},
+    {"index": 5, "type": "app_send", "host": "A", "payload": "charl"}
+  ],
+  "assertions": [
+    {"after_event": 5, "host": "A", "check": "bytes_acked == 15"},
+    {"after_event": 5, "host": "B", "check": "bytes_delivered == 15"}
+  ]
+}

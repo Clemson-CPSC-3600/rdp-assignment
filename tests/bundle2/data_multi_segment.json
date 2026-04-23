@@ -1,0 +1,24 @@
+{
+  "name": "data_multi_segment",
+  "category": "data_transfer",
+  "bundle": 2,
+  "points": 3,
+  "description": "A sends 3 segments back-to-back; all are delivered and ACKed.",
+  "config": {
+    "timer_interval": 1.0,
+    "window_size": 4096,
+    "a_isn": 1000,
+    "b_isn": 5000,
+    "initial_sender": "A"
+  },
+  "events": [
+    {"index": 0, "type": "handshake_complete"},
+    {"index": 1, "type": "app_send", "host": "A", "payload": "hello"},
+    {"index": 2, "type": "app_send", "host": "A", "payload": " worl"},
+    {"index": 3, "type": "app_send", "host": "A", "payload": "d!!!!"}
+  ],
+  "assertions": [
+    {"after_event": 3, "host": "B", "check": "bytes_delivered == 15"},
+    {"after_event": 3, "host": "A", "check": "bytes_acked == 15"}
+  ]
+}

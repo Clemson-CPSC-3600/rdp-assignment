@@ -1,0 +1,29 @@
+{
+  "name": "sack_incremental_fill",
+  "category": "sack",
+  "bundle": 3,
+  "points": 4,
+  "description": "Segment 1 dropped; segments 2 and 3 arrive out-of-order; SACK block coalesces; retransmit fills the hole and drains all buffered data.",
+  "config": {
+    "timer_interval": 1.0,
+    "window_size": 4096,
+    "a_isn": 1000,
+    "b_isn": 5000,
+    "initial_sender": "A"
+  },
+  "events": [
+    {"index": 0, "type": "handshake_complete"},
+    {"index": 1, "type": "drop_next", "match": {"host": "A", "pkt_type": "DATA", "seq": 1001}},
+    {"index": 2, "type": "app_send", "host": "A", "payload": "first"},
+    {"index": 3, "type": "app_send", "host": "A", "payload": "secnd"},
+    {"index": 4, "type": "app_send", "host": "A", "payload": "third"},
+    {"index": 5, "t": 2.5, "type": "tick"}
+  ],
+  "assertions": [
+    {"after_event": 3, "host": "B", "check": "sack_blocks[0] == (1006, 1011)"},
+    {"after_event": 4, "host": "B", "check": "sack_blocks[0] == (1006, 1016)"},
+    {"after_event": 5, "host": "B", "check": "sack_blocks == []"},
+    {"after_event": 5, "host": "B", "check": "bytes_delivered == 15"},
+    {"after_event": 5, "host": "A", "check": "retransmit_count[1001] >= 1"}
+  ]
+}

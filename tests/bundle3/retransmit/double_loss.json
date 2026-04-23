@@ -1,0 +1,28 @@
+{
+  "name": "double_loss",
+  "category": "retransmit",
+  "bundle": 3,
+  "points": 4,
+  "description": "Same DATA segment dropped twice; A must retransmit twice before B delivers.",
+  "config": {
+    "timer_interval": 1.0,
+    "window_size": 4096,
+    "a_isn": 1000,
+    "b_isn": 5000,
+    "initial_sender": "A"
+  },
+  "events": [
+    {"index": 0, "type": "handshake_complete"},
+    {"index": 1, "type": "drop_next", "match": {"host": "A", "pkt_type": "DATA"}},
+    {"index": 2, "type": "drop_next", "match": {"host": "A", "pkt_type": "DATA"}},
+    {"index": 3, "type": "app_send", "host": "A", "payload": "hello"},
+    {"index": 4, "t": 2.5, "type": "tick"},
+    {"index": 5, "t": 4.0, "type": "tick"}
+  ],
+  "assertions": [
+    {"after_event": 4, "host": "A", "check": "retransmit_count[1001] >= 1"},
+    {"after_event": 5, "host": "A", "check": "retransmit_count[1001] >= 2"},
+    {"after_event": 5, "host": "B", "check": "bytes_delivered == 5"},
+    {"after_event": 5, "host": "A", "check": "bytes_acked == 5"}
+  ]
+}

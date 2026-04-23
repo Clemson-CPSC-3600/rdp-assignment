@@ -1,0 +1,29 @@
+{
+  "name": "ack_loss_with_window",
+  "category": "ack_loss",
+  "bundle": 3,
+  "points": 4,
+  "description": "Two ACKs dropped fill the window (size=10); retransmit timer fires and reopens the window.",
+  "config": {
+    "timer_interval": 1.0,
+    "window_size": 10,
+    "a_isn": 1000,
+    "b_isn": 5000,
+    "initial_sender": "A"
+  },
+  "events": [
+    {"index": 0, "type": "handshake_complete"},
+    {"index": 1, "type": "drop_next", "match": {"host": "B", "pkt_type": "ACK"}},
+    {"index": 2, "type": "app_send", "host": "A", "payload": "hello"},
+    {"index": 3, "type": "drop_next", "match": {"host": "B", "pkt_type": "ACK"}},
+    {"index": 4, "type": "app_send", "host": "A", "payload": "world"},
+    {"index": 5, "t": 2.5, "type": "tick"}
+  ],
+  "assertions": [
+    {"after_event": 4, "host": "A", "check": "next_seq == 1011"},
+    {"after_event": 4, "host": "A", "check": "window_base == 1001"},
+    {"after_event": 5, "host": "A", "check": "retransmit_count[1001] >= 1"},
+    {"after_event": 5, "host": "A", "check": "bytes_acked == 10"},
+    {"after_event": 5, "host": "B", "check": "bytes_delivered == 10"}
+  ]
+}

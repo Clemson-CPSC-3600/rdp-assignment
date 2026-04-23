@@ -1,0 +1,24 @@
+{
+  "name": "simple_data_loss",
+  "category": "retransmit",
+  "bundle": 3,
+  "points": 3,
+  "description": "A's DATA is dropped on first send; A must retransmit after RTO.",
+  "config": {
+    "timer_interval": 1.0,
+    "window_size": 4096,
+    "a_isn": 1000,
+    "b_isn": 5000,
+    "initial_sender": "A"
+  },
+  "events": [
+    {"index": 0, "type": "handshake_complete"},
+    {"index": 1, "type": "drop_next", "match": {"host": "A", "pkt_type": "DATA"}},
+    {"index": 2, "type": "app_send", "host": "A", "payload": "hello"},
+    {"index": 3, "t": 2.5, "type": "tick"}
+  ],
+  "assertions": [
+    {"after_event": 3, "host": "A", "check": "retransmit_count[1001] >= 1"},
+    {"after_event": 3, "host": "B", "check": "bytes_delivered == 5"}
+  ]
+}

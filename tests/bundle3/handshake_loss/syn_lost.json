@@ -1,0 +1,26 @@
+{
+  "name": "syn_lost",
+  "category": "handshake_loss",
+  "bundle": 3,
+  "points": 3,
+  "description": "A's SYN is dropped; A's retransmit timer fires and retransmits SYN; handshake completes on second attempt.",
+  "config": {
+    "timer_interval": 1.0,
+    "window_size": 4096,
+    "a_isn": 1000,
+    "b_isn": 5000,
+    "initial_sender": "A"
+  },
+  "events": [
+    {"index": 0, "type": "drop_next", "match": {"host": "A", "pkt_type": "SYN"}},
+    {"index": 1, "type": "app_send", "host": "A", "payload": ""},
+    {"index": 2, "t": 2.5, "type": "tick"}
+  ],
+  "assertions": [
+    {"after_event": 2, "host": "A", "check": "state == ESTABLISHED"},
+    {"after_event": 2, "host": "B", "check": "state == ESTABLISHED"},
+    {"after_event": 2, "host": "A", "check": "retransmit_count[1000] >= 1"},
+    {"after_event": 2, "host": "A", "check": "next_seq == 1001"},
+    {"after_event": 2, "host": "A", "check": "window_base == 1001"}
+  ]
+}

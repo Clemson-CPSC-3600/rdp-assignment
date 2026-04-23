@@ -1,0 +1,21 @@
+{
+  "name": "handshake_basic",
+  "category": "handshake",
+  "bundle": 2,
+  "points": 3,
+  "description": "A initiates handshake; both sides reach ESTABLISHED.",
+  "config": {
+    "timer_interval": 1.0,
+    "window_size": 4096,
+    "a_isn": 1000,
+    "b_isn": 5000,
+    "initial_sender": "A"
+  },
+  "events": [
+    {"index": 0, "type": "handshake_complete"}
+  ],
+  "assertions": [
+    {"after_event": 0, "host": "A", "check": "state == ESTABLISHED"},
+    {"after_event": 0, "host": "B", "check": "state == ESTABLISHED"}
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "data_corrupt",
+  "category": "corruption",
+  "bundle": 3,
+  "points": 3,
+  "description": "A's DATA packet is corrupted in transit; B's is_corrupt() drops it; A retransmits after RTO.",
+  "config": {
+    "timer_interval": 1.0,
+    "window_size": 4096,
+    "a_isn": 1000,
+    "b_isn": 5000,
+    "initial_sender": "A"
+  },
+  "events": [
+    {"index": 0, "type": "handshake_complete"},
+    {"index": 1, "type": "corrupt_next", "match": {"host": "A", "pkt_type": "DATA"}},
+    {"index": 2, "type": "app_send", "host": "A", "payload": "hello"},
+    {"index": 3, "t": 2.5, "type": "tick"}
+  ],
+  "assertions": [
+    {"after_event": 3, "host": "A", "check": "retransmit_count[1001] >= 1"},
+    {"after_event": 3, "host": "A", "check": "bytes_acked == 5"},
+    {"after_event": 3, "host": "B", "check": "bytes_delivered == 5"}
+  ]
+}

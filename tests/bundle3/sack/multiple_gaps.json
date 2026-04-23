@@ -1,0 +1,31 @@
+{
+  "name": "multiple_gaps",
+  "category": "sack",
+  "bundle": 3,
+  "points": 4,
+  "description": "4 segments sent; segments 2 (seq=1006) and 4 (seq=1016) dropped; A retransmits both after RTO.",
+  "config": {
+    "timer_interval": 1.0,
+    "window_size": 4096,
+    "a_isn": 1000,
+    "b_isn": 5000,
+    "initial_sender": "A"
+  },
+  "events": [
+    {"index": 0, "type": "handshake_complete"},
+    {"index": 1, "type": "app_send", "host": "A", "payload": "A1234"},
+    {"index": 2, "type": "drop_next", "match": {"host": "A", "pkt_type": "DATA", "seq": 1006}},
+    {"index": 3, "type": "app_send", "host": "A", "payload": "B1234"},
+    {"index": 4, "type": "app_send", "host": "A", "payload": "C1234"},
+    {"index": 5, "type": "drop_next", "match": {"host": "A", "pkt_type": "DATA", "seq": 1016}},
+    {"index": 6, "type": "app_send", "host": "A", "payload": "D1234"},
+    {"index": 7, "t": 2.5, "type": "tick"},
+    {"index": 8, "t": 5.0, "type": "tick"}
+  ],
+  "assertions": [
+    {"after_event": 7, "host": "A", "check": "retransmit_count[1006] >= 1"},
+    {"after_event": 8, "host": "A", "check": "retransmit_count[1016] >= 1"},
+    {"after_event": 8, "host": "B", "check": "bytes_delivered == 20"},
+    {"after_event": 8, "host": "A", "check": "bytes_acked == 20"}
+  ]
+}

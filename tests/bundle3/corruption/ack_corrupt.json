@@ -1,0 +1,26 @@
+{
+  "name": "ack_corrupt",
+  "category": "corruption",
+  "bundle": 3,
+  "points": 3,
+  "description": "B's ACK is corrupted in transit; A's is_corrupt() drops it; A retransmits DATA after RTO; B sends a clean ACK on dup DATA, A receives it.",
+  "config": {
+    "timer_interval": 1.0,
+    "window_size": 4096,
+    "a_isn": 1000,
+    "b_isn": 5000,
+    "initial_sender": "A"
+  },
+  "events": [
+    {"index": 0, "type": "handshake_complete"},
+    {"index": 1, "type": "corrupt_next", "match": {"host": "B", "pkt_type": "ACK"}},
+    {"index": 2, "type": "app_send", "host": "A", "payload": "hello"},
+    {"index": 3, "t": 2.5, "type": "tick"}
+  ],
+  "assertions": [
+    {"after_event": 2, "host": "B", "check": "bytes_delivered == 5"},
+    {"after_event": 3, "host": "A", "check": "retransmit_count[1001] >= 1"},
+    {"after_event": 3, "host": "A", "check": "bytes_acked == 5"},
+    {"after_event": 3, "host": "B", "check": "bytes_delivered == 5"}
+  ]
+}

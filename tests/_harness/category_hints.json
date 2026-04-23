@@ -1,0 +1,75 @@
+{
+  "retransmit": {
+    "summary": "Tests retransmission after data loss.",
+    "hints": [
+      "Timer not started when the unacked buffer becomes non-empty.",
+      "Timer not restarted after a partial ACK that leaves segments outstanding.",
+      "Retransmit uses next_seq instead of window_base as the seq to resend."
+    ]
+  },
+  "ack_loss": {
+    "summary": "Tests cumulative ACK absorption of dropped ACKs.",
+    "hints": [
+      "Sender re-retransmits on ACK loss instead of waiting for the next ACK.",
+      "Cumulative ACK retires more than one segment; check your loop bound.",
+      "ACK number interpreted as 'last received' instead of 'next expected'."
+    ]
+  },
+  "sack": {
+    "summary": "Tests SACK block generation on out-of-order receive and selective retransmission by sender.",
+    "hints": [
+      "Receiver generates cumulative ACK but no SACK blocks for out-of-order bytes.",
+      "SACK blocks are sent but sender ignores them and retransmits everything.",
+      "SACK block ranges off-by-one (half-open [start, end) vs closed [start, end])."
+    ]
+  },
+  "corruption": {
+    "summary": "Tests that checksum-failed packets are treated as drops.",
+    "hints": [
+      "is_corrupt returns True but the packet is still processed.",
+      "Corrupted DATA packets generate an ACK instead of being silently dropped.",
+      "Corrupted ACK packets advance window_base (should not — drop silently)."
+    ]
+  },
+  "handshake_loss": {
+    "summary": "Tests handshake retry when SYN or SYN_ACK is dropped.",
+    "hints": [
+      "No timer started for the SYN; handshake stalls on loss.",
+      "SYN_ACK retransmitted with a new ISN instead of reusing the original.",
+      "Server transitions past SYN_RECEIVED on a duplicate SYN instead of resending SYN_ACK."
+    ]
+  },
+  "teardown_edge": {
+    "summary": "Tests FIN teardown, including loss and simultaneous close.",
+    "hints": [
+      "FIN_ACK not sent after receiving a FIN.",
+      "Connection state does not transition to CLOSED after both halves FIN.",
+      "Simultaneous close handled as one-sided (one endpoint still in FIN_WAIT)."
+    ]
+  },
+  "handshake": {
+    "summary": "Tests 3-way handshake completion under ideal conditions (Bundle 2).",
+    "hints": [
+      "Client never transitions SYN_SENT to ESTABLISHED — check ack_num validation on SYN_ACK.",
+      "Server never transitions SYN_RECEIVED to ESTABLISHED — check the final ACK handler.",
+      "Either side's next_seq not advanced to isn+1 after handshake completes."
+    ]
+  },
+  "data_transfer": {
+    "summary": "Tests data transfer on a clean channel (Bundle 2).",
+    "hints": [
+      "Receiver's peer_ack_num not advanced by len(payload) on in-order DATA.",
+      "Sender's window_base not advanced on cumulative ACK — check the retirement loop.",
+      "Multi-segment sends only transmit the first segment — check _try_send_from_queue loop.",
+      "bytes_acked or bytes_delivered counters not being incremented at all."
+    ]
+  },
+  "teardown": {
+    "summary": "Tests FIN teardown (Bundle 2, unilateral close on a clean channel).",
+    "hints": [
+      "FIN_ACK sent but state not transitioned to CLOSED.",
+      "Sender of FIN does not start the retransmit timer (breaks Bundle 3 FIN-loss scenarios).",
+      "FIN processed in ESTABLISHED but not in other states where it's also valid."
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "single_ack_loss",
+  "category": "ack_loss",
+  "bundle": 3,
+  "points": 3,
+  "description": "B's ACK for A's first segment is dropped; second ACK covers both cumulatively.",
+  "config": {
+    "timer_interval": 1.0,
+    "window_size": 4096,
+    "a_isn": 1000,
+    "b_isn": 5000,
+    "initial_sender": "A"
+  },
+  "events": [
+    {"index": 0, "type": "handshake_complete"},
+    {"index": 1, "type": "drop_next", "match": {"host": "B", "pkt_type": "ACK"}},
+    {"index": 2, "type": "app_send", "host": "A", "payload": "hello"},
+    {"index": 3, "type": "app_send", "host": "A", "payload": "world"}
+  ],
+  "assertions": [
+    {"after_event": 3, "host": "A", "check": "bytes_acked == 10"},
+    {"after_event": 3, "host": "B", "check": "bytes_delivered == 10"}
+  ]
+}

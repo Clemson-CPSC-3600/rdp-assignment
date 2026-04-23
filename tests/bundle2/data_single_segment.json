@@ -1,0 +1,22 @@
+{
+  "name": "data_single_segment",
+  "category": "data_transfer",
+  "bundle": 2,
+  "points": 3,
+  "description": "After handshake, A sends one DATA segment, B delivers to app and ACKs.",
+  "config": {
+    "timer_interval": 1.0,
+    "window_size": 4096,
+    "a_isn": 1000,
+    "b_isn": 5000,
+    "initial_sender": "A"
+  },
+  "events": [
+    {"index": 0, "type": "handshake_complete"},
+    {"index": 1, "type": "app_send", "host": "A", "payload": "hello"}
+  ],
+  "assertions": [
+    {"after_event": 1, "host": "B", "check": "bytes_delivered == 5"},
+    {"after_event": 1, "host": "A", "check": "bytes_acked == 5"}
+  ]
+}
