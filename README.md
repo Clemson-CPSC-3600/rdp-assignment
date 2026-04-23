@@ -41,7 +41,9 @@ rdp-assignment/
 ├── template/rdp/         starter stubs — copy to src/rdp/ to begin
 ├── docs/protocol/
 │   ├── wire-format.md    packet layout reference
-│   └── fsm.md            state machine and sequence diagrams
+│   ├── fsm.md            state machine and sequence diagrams
+│   └── implementation.md code-level flowcharts
+├── IMPLEMENTATION_GUIDE.md  step-by-step implementation order
 ├── GRADING.md            bundle requirements and common pitfalls
 └── AI_POLICY.md          AI use policy
 ```
@@ -66,6 +68,10 @@ pytest -v
 ```
 
 Bundle 2 and Bundle 3 tests run scenario files (JSON) through a harness that simulates packet delivery, drops, and corruption. When a test fails the harness prints a diagnostic showing the exact assertion that failed, the actual protocol state at that point, and a hint about which code path to investigate. Read that output carefully — it tells you where in your state machine the divergence occurred.
+
+## Where to Start
+
+Read **`IMPLEMENTATION_GUIDE.md`** before writing any code. It tells you what to read first, in what order to implement each function, and when to run tests.
 
 ## Bundle Descriptions
 
